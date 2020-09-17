@@ -74,14 +74,14 @@ class Data1():
         self.df1 = pd.read_csv(
             'C:/Users/Dae-Young Park/sensor_dataset/refined_data_v4/new_data1_2019_nov_15_2020_may_25_vehicle_present.csv')
         self.df1['Total_date'] = pd.to_datetime(self.df1['Total_date'])
-        self.make_lst_loc()
+        #self.make_lst_loc()
 
     def load_idx_datetime(self):
         self.df1 = pd.read_csv(
             'C:/Users/Dae-Young Park/sensor_dataset/refined_data_v4/new_data1_2019_nov_15_2020_may_25_vehicle_present.csv')
         self.df1['Total_date'] = pd.to_datetime(self.df1['Total_date'])
         self.df1 = self.df1.set_index('Total_date')  # 오케이 일단, 시계열로 분석할 수 있게 해놓았음 --> 이제 비쥬얼 툴로 화면에 뿌려보자
-        self.make_lst_loc()
+        #self.make_lst_loc()
 
     def get_df1(self):
         return self.df1.copy()
@@ -107,6 +107,51 @@ class Data1():
                 icon=folium.Icon(color='blue',icon='star')
             ).add_to(map_object)
 
+    def show_violation(self): # 시계열로 보여주기
+        new_df1 = self.df1.loc[:, ['In Violation','Total_date']]
+        new_df1['Total_date'] = pd.to_datetime(new_df1['Total_date'])
+
+        mask = (new_df1['Total_date'] >= '2020-01-01') & (new_df1['Total_date'] <= '2020-02-20') # 기간도 정하기
+        new_df1 = new_df1.loc[mask]
+
+        new_df1 = new_df1.set_index('Total_date')
+        print(new_df1)
+        #new_df1.plot(kind='bar',rot=0)
+        new_df1.plot()
+        plt.ylim(bottom=0)
+        plt.ylim(top=2)
+        plt.xlabel("Time")
+        plt.ylabel("Counts of violation")
+        print('hi')
+        plt.show()
+
+    def show_duration_avg(self):
+        new_df1 = self.df1.loc[:, ['DurationMinutes','Total_date']]
+        #print(new_df1)
+        grouped = new_df1.groupby('Total_date')
+        #print(grouped.mean())
+        grouped = grouped.mean()
+        '''
+        new_df1['Total_date'] = pd.to_datetime(new_df1['Total_date'])
+        new_df1 = new_df1.set_index('Total_date')
+
+        mask = (new_df1['DurationMinutes'] >= 0)
+        new_df1 = new_df1.loc[mask]
+
+        new_df1.plot()
+        '''
+        #grouped['Total_date'] = pd.to_datetime(grouped['Total_date'])
+        #grouped = grouped.set_index('Total_date')
+
+        mask = (grouped['DurationMinutes'] >= 0)
+        grouped = grouped.loc[mask]
+
+        grouped.plot()
+        plt.xlabel("Time")
+        plt.ylabel("Average of parking duration(Minute)")
+        plt.show()
+
+
 class Data2():
     def __init__(self):
         self.df2 = None
@@ -122,12 +167,12 @@ class Data2():
     def load(self):
         self.df2 = pd.read_csv('C:/Users/Dae-Young Park/sensor_dataset/refined_data_v4/new_data2_2019_nov_15_2020_may_25.csv')
         self.df2['Total_date'] = pd.to_datetime(self.df2['Total_date'])
-        self.make_lst_loc()
+        #self.make_lst_loc()
     def load_idx_datetime(self):
         self.df2 = pd.read_csv('C:/Users/Dae-Young Park/sensor_dataset/refined_data_v4/new_data2_2019_nov_15_2020_may_25.csv')
         self.df2['Total_date'] = pd.to_datetime(self.df2['Total_date'])
         self.df2 = self.df2.set_index('Total_date') # 오케이 일단, 시계열로 분석할 수 있게 해놓았음 --> 이제 비쥬얼 툴로 화면에 뿌려보자
-        self.make_lst_loc()
+        #self.make_lst_loc()
     def get_df2(self):
         return self.df2.copy()
     def describe_statistics(self):
@@ -156,6 +201,7 @@ class Data2():
                 location=self.lst_loc[i],
                 icon=folium.Icon(color='green',icon='star')
             ).add_to(map_object)
+
 
 class Data3():
     def __init__(self):
@@ -311,13 +357,17 @@ def show_fiveSummary_days():
     plt.show()
 
 if __name__ == "__main__":
-    show_fiveSummary_days()
+    #show_fiveSummary_days()
     #show_fiveSummary_timezone()
     #show_count_pedestrians_on_days()
-    #data = Data1()
+
+    data = Data1()
     #data.load_idx_datetime()
-    #data.load()
-    #df1 = data.get_df1()
+    data.load()
+    df1 = data.get_df1()
+
+    #data.show_violation()
+    data.show_duration_avg()
 
     '''
     map_object = folium.Map(

@@ -817,6 +817,7 @@ for_five_summary_days = pd.DataFrame(columns=["Monday", "Tuesday", "Wednesday", 
 for_five_summary_days.to_csv('./for_five_summary_days.csv')
 '''
 
+''' 5 섬멈리 박스 만들기
 #data1 = open('./new_df2_count_per_date_plus_days.csv', 'r', encoding='utf-8')
 #rdr_dt1 = csv.DictReader(data1)
 
@@ -833,3 +834,12 @@ for index, row in new_df2_count_per_date_plus_days.iterrows():
 
 print(pd_fiveSummary_days)
 pd_fiveSummary_days.to_csv('./for_five_summary_days.csv')
+'''
+
+
+pd_data1 = pd.read_csv('./new_data1_2019_nov_15_2020_may_25_vehicle_present.csv')
+
+mask1 = (pd_data1['In Violation'] == 1)
+new_pd_data1 = pd_data1.loc[mask1]
+
+#print(new_pd_data1)
